@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package proto.wallet.v1;
+
+option go_package = "github.com/susilo001/simple-wallet-system/wallet/proto/wallet/v1;wallet";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service WalletService {
+    rpc GetWallet (GetWalletRequest) returns (GetWalletResponse);
+    rpc CreateWallet (CreateWalletRequest) returns (MutationResponse);
+    rpc UpdateWallet (UpdateWalletRequest) returns (MutationResponse);
+    rpc GetBalance (GetBalanceRequest) returns (GetBalanceResponse);  
+}
+
+message CreateWalletRequest {
+    int32 user_id = 1;
+}
+
+message UpdateWalletRequest {
+    int32 user_id = 1;
+    double balance = 2;
+}
+
+message GetWalletRequest {
+    int32 wallet_id = 1;
+}
+
+message GetWalletResponse {
+    Wallet wallet = 1;
+}
+
+message GetBalanceRequest {
+    int32 wallet_id = 1;
+}
+
+message GetBalanceResponse {
+    double balance = 1;
+}
+
+message MutationResponse {
+    string message = 1;
+}
+
+message Wallet {
+    int32 id = 1;
+    int32 user_id = 2;
+    double balance = 3;
+    google.protobuf.Timestamp created_at = 4;
+    google.protobuf.Timestamp updated_at = 5;
+}

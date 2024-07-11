@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package proto.user.v1;
+
+option go_package = "github.com/susilo001/simple-wallet-system/user/proto/user/v1;user";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// User message definition
+message User {
+    int32 id = 1;
+    string name = 2;
+    string email = 3;
+    string password = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
+}
+
+// Response message for getting all users
+message GetUsersResponse {
+    repeated User data = 1;
+    string err = 2;
+}
+
+// Request message for getting a specific user by ID
+message GetUserRequest {
+    int32 id = 1;
+}
+
+// Response message for getting a specific user by ID
+message GetUserResponse {
+    User data = 1;
+    string err = 2;
+}
+
+// Request message for adding a new user
+message CreateUserRequest {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message UpdateUserRequest {
+    User data = 1;
+}
+
+message DeleteUserRequest {
+    int32 id = 1;
+}
+
+message MutationResponse {
+    string message = 1;
+}
+
+service UserService {
+    rpc GetUsers(google.protobuf.Empty) returns (GetUsersResponse) {}
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+    rpc CreateUser(CreateUserRequest) returns (MutationResponse) {}
+    rpc UpdateUser(UpdateUserRequest) returns (MutationResponse) {}
+    rpc DeleteUser(DeleteUserRequest) returns (MutationResponse) {}
+}

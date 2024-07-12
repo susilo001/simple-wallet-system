@@ -26,6 +26,9 @@ type WalletServiceClient interface {
 	CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*MutationResponse, error)
 	UpdateWallet(ctx context.Context, in *UpdateWalletRequest, opts ...grpc.CallOption) (*MutationResponse, error)
 	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
+	TopupWallet(ctx context.Context, in *TopupRequest, opts ...grpc.CallOption) (*MutationResponse, error)
+	Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*MutationResponse, error)
+	GetTransactions(ctx context.Context, in *GetTransactionsRequest, opts ...grpc.CallOption) (*GetTransactionsResponse, error)
 }
 
 type walletServiceClient struct {
@@ -72,6 +75,33 @@ func (c *walletServiceClient) GetBalance(ctx context.Context, in *GetBalanceRequ
 	return out, nil
 }
 
+func (c *walletServiceClient) TopupWallet(ctx context.Context, in *TopupRequest, opts ...grpc.CallOption) (*MutationResponse, error) {
+	out := new(MutationResponse)
+	err := c.cc.Invoke(ctx, "/proto.wallet.v1.WalletService/TopupWallet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletServiceClient) Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*MutationResponse, error) {
+	out := new(MutationResponse)
+	err := c.cc.Invoke(ctx, "/proto.wallet.v1.WalletService/Transfer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletServiceClient) GetTransactions(ctx context.Context, in *GetTransactionsRequest, opts ...grpc.CallOption) (*GetTransactionsResponse, error) {
+	out := new(GetTransactionsResponse)
+	err := c.cc.Invoke(ctx, "/proto.wallet.v1.WalletService/GetTransactions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServiceServer is the server API for WalletService service.
 // All implementations must embed UnimplementedWalletServiceServer
 // for forward compatibility
@@ -80,6 +110,9 @@ type WalletServiceServer interface {
 	CreateWallet(context.Context, *CreateWalletRequest) (*MutationResponse, error)
 	UpdateWallet(context.Context, *UpdateWalletRequest) (*MutationResponse, error)
 	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
+	TopupWallet(context.Context, *TopupRequest) (*MutationResponse, error)
+	Transfer(context.Context, *TransferRequest) (*MutationResponse, error)
+	GetTransactions(context.Context, *GetTransactionsRequest) (*GetTransactionsResponse, error)
 	mustEmbedUnimplementedWalletServiceServer()
 }
 
@@ -98,6 +131,15 @@ func (UnimplementedWalletServiceServer) UpdateWallet(context.Context, *UpdateWal
 }
 func (UnimplementedWalletServiceServer) GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBalance not implemented")
+}
+func (UnimplementedWalletServiceServer) TopupWallet(context.Context, *TopupRequest) (*MutationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TopupWallet not implemented")
+}
+func (UnimplementedWalletServiceServer) Transfer(context.Context, *TransferRequest) (*MutationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Transfer not implemented")
+}
+func (UnimplementedWalletServiceServer) GetTransactions(context.Context, *GetTransactionsRequest) (*GetTransactionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTransactions not implemented")
 }
 func (UnimplementedWalletServiceServer) mustEmbedUnimplementedWalletServiceServer() {}
 
@@ -184,6 +226,60 @@ func _WalletService_GetBalance_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WalletService_TopupWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TopupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServiceServer).TopupWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.wallet.v1.WalletService/TopupWallet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServiceServer).TopupWallet(ctx, req.(*TopupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WalletService_Transfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServiceServer).Transfer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.wallet.v1.WalletService/Transfer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServiceServer).Transfer(ctx, req.(*TransferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WalletService_GetTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTransactionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServiceServer).GetTransactions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.wallet.v1.WalletService/GetTransactions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServiceServer).GetTransactions(ctx, req.(*GetTransactionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WalletService_ServiceDesc is the grpc.ServiceDesc for WalletService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +302,18 @@ var WalletService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBalance",
 			Handler:    _WalletService_GetBalance_Handler,
+		},
+		{
+			MethodName: "TopupWallet",
+			Handler:    _WalletService_TopupWallet_Handler,
+		},
+		{
+			MethodName: "Transfer",
+			Handler:    _WalletService_Transfer_Handler,
+		},
+		{
+			MethodName: "GetTransactions",
+			Handler:    _WalletService_GetTransactions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

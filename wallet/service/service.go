@@ -12,8 +12,9 @@ type IWalletService interface {
 	CreateWallet(ctx context.Context, wallet *entity.Wallet) (entity.Wallet, error)
 	GetWalletByID(ctx context.Context, id int) (entity.Wallet, error)
 	UpdateWallet(ctx context.Context, id int, wallet entity.Wallet) (entity.Wallet, error)
-	DeleteWallet(ctx context.Context, id int) error
-	GetAllWallets(ctx context.Context) ([]entity.Wallet, error)
+	TopupWallet(ctx context.Context, walletID int, amount float64) error
+	Transfer(ctx context.Context, fromWalletID int, toWalletID int, amount float64) error
+	GetTransactions(ctx context.Context, walletID int) ([]entity.Transaction, error)
 }
 
 // IWalletRepository defines the interface for the wallet repository
@@ -23,6 +24,9 @@ type IWalletRepository interface {
 	UpdateWallet(ctx context.Context, id int, wallet entity.Wallet) (entity.Wallet, error)
 	DeleteWallet(ctx context.Context, id int) error
 	GetAllWallets(ctx context.Context) ([]entity.Wallet, error)
+	TopupWallet(ctx context.Context, walletID int, amount float64) error
+	Transfer(ctx context.Context, fromWalletID int, toWalletID int, amount float64) error
+	GetTransactions(ctx context.Context, walletID int) ([]entity.Transaction, error)
 }
 
 // walletService is an implementation of IWalletService that uses IWalletRepository
@@ -63,6 +67,33 @@ func (s *walletService) UpdateWallet(ctx context.Context, id int, wallet entity.
 		return entity.Wallet{}, fmt.Errorf("failed to update wallet: %v", err)
 	}
 	return updatedWallet, nil
+}
+
+// TopupWallet tops up the balance of a wallet
+func (s *walletService) TopupWallet(ctx context.Context, walletID int, amount float64) error {
+	err := s.walletRepo.TopupWallet(ctx, walletID, amount)
+	if err != nil {
+		return fmt.Errorf("failed to top up wallet: %v", err)
+	}
+	return nil
+}
+
+// Transfer transfers an amount from one wallet to another
+func (s *walletService) Transfer(ctx context.Context, fromWalletID int, toWalletID int, amount float64) error {
+	err := s.walletRepo.Transfer(ctx, fromWalletID, toWalletID, amount)
+	if err != nil {
+		return fmt.Errorf("failed to transfer amount: %v", err)
+	}
+	return nil
+}
+
+// GetTransactions gets all transactions for a wallet
+func (s *walletService) GetTransactions(ctx context.Context, walletID int) ([]entity.Transaction, error) {
+	transactions, err := s.walletRepo.GetTransactions(ctx, walletID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get transactions: %v", err)
+	}
+	return transactions, nil
 }
 
 // DeleteWallet deletes a wallet by ID

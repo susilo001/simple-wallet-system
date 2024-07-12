@@ -19,7 +19,7 @@ message User {
 
 // Response message for getting all users
 message GetUsersResponse {
-    repeated User data = 1;
+    repeated User user = 1;
     string err = 2;
 }
 
@@ -30,7 +30,7 @@ message GetUserRequest {
 
 // Response message for getting a specific user by ID
 message GetUserResponse {
-    User data = 1;
+    User user = 1;
     string err = 2;
 }
 
@@ -42,7 +42,7 @@ message CreateUserRequest {
 }
 
 message UpdateUserRequest {
-    User data = 1;
+    User user = 1;
 }
 
 message DeleteUserRequest {

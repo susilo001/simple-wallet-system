@@ -47,7 +47,7 @@ func (u *UserHandler) GetUsers(ctx context.Context, _ *emptypb.Empty) (*pb.GetUs
 	}
 
 	return &pb.GetUsersResponse{
-		Data: usersProto,
+		User: usersProto,
 	}, nil
 }
 func (u *UserHandler) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
@@ -57,7 +57,7 @@ func (u *UserHandler) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 		return nil, err
 	}
 	res := &pb.GetUserResponse{
-		Data: &pb.User{
+		User: &pb.User{
 			Id:        int32(user.ID),
 			Name:      user.Name,
 			Email:     user.Email,
@@ -85,7 +85,7 @@ func (u *UserHandler) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 }
 func (u *UserHandler) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.MutationResponse, error) {
 	return &pb.MutationResponse{
-		Message: fmt.Sprintf("Success update user with ID %d", req.Data.Id),
+		Message: fmt.Sprintf("Success update user with ID %d", req.User.Id),
 	}, nil
 }
 func (u *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.MutationResponse, error) {

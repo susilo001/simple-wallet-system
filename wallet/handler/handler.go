@@ -77,3 +77,46 @@ func (h *WalletHandler) GetBalance(ctx context.Context, req *pb.GetBalanceReques
 		Balance: wallet.Balance,
 	}, nil
 }
+
+func (h *WalletHandler) TopupWallet(ctx context.Context, req *pb.TopupRequest) (*pb.MutationResponse, error) {
+	err := h.walletService.TopupWallet(ctx, int(req.GetWalletId()), req.GetAmount())
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return &pb.MutationResponse{
+		Message: fmt.Sprintf("Successfully topped up wallet with ID %d", req.GetWalletId()),
+	}, nil
+}
+
+func (h *WalletHandler) Transfer(ctx context.Context, req *pb.TransferRequest) (*pb.MutationResponse, error) {
+	err := h.walletService.Transfer(ctx, int(req.GetFromWalletId()), int(req.GetToWalletId()), req.GetAmount())
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return &pb.MutationResponse{
+		Message: fmt.Sprintf("Successfully transferred from wallet ID %d to wallet ID %d", req.GetFromWalletId(), req.GetToWalletId()),
+	}, nil
+}
+
+func (h *WalletHandler) GetTransactions(ctx context.Context, req *pb.GetTransactionsRequest) (*pb.GetTransactionsResponse, error) {
+	transactions, err := h.walletService.GetTransactions(ctx, int(req.GetWalletId()))
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	var pbTransactions []*pb.Transaction
+	for _, transaction := range transactions {
+		pbTransactions = append(pbTransactions, &pb.Transaction{
+			Id:           int32(transaction.ID),
+			FromWalletId: int32(transaction.FromWalletID),
+			ToWalletId:   int32(transaction.ToWalletID),
+			Amount:       transaction.Amount,
+			CreatedAt:    timestamppb.New(transaction.CreatedAt),
+		})
+	}
+	return &pb.GetTransactionsResponse{
+		Transactions: pbTransactions,
+	}, nil
+}

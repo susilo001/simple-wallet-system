@@ -78,25 +78,24 @@ func (h *WalletHandler) GetBalance(ctx context.Context, req *pb.GetBalanceReques
 	}, nil
 }
 
-func (h *WalletHandler) TopupWallet(ctx context.Context, req *pb.TopupRequest) (*pb.MutationResponse, error) {
-	err := h.walletService.TopupWallet(ctx, int(req.GetWalletId()), req.GetAmount())
-	if err != nil {
+func (h *WalletHandler) TopUpWallet(ctx context.Context, req *pb.TopupRequest) (*pb.MutationResponse, error) {
+	if err := h.walletService.TopUpWallet(ctx, int(req.GetWalletId()), req.GetAmount()); err != nil {
 		log.Println(err)
 		return nil, err
 	}
+
 	return &pb.MutationResponse{
 		Message: fmt.Sprintf("Successfully topped up wallet with ID %d", req.GetWalletId()),
 	}, nil
 }
 
 func (h *WalletHandler) Transfer(ctx context.Context, req *pb.TransferRequest) (*pb.MutationResponse, error) {
-	err := h.walletService.Transfer(ctx, int(req.GetFromWalletId()), int(req.GetToWalletId()), req.GetAmount())
-	if err != nil {
+	if err := h.walletService.Transfer(ctx, int(req.GetSenderId()), int(req.GetRecipientId()), req.GetAmount()); err != nil {
 		log.Println(err)
 		return nil, err
 	}
 	return &pb.MutationResponse{
-		Message: fmt.Sprintf("Successfully transferred from wallet ID %d to wallet ID %d", req.GetFromWalletId(), req.GetToWalletId()),
+		Message: fmt.Sprintf("Successfully transferred from wallet ID %d to wallet ID %d", req.GetSenderId(), req.GetRecipientId()),
 	}, nil
 }
 
@@ -109,11 +108,12 @@ func (h *WalletHandler) GetTransactions(ctx context.Context, req *pb.GetTransact
 	var pbTransactions []*pb.Transaction
 	for _, transaction := range transactions {
 		pbTransactions = append(pbTransactions, &pb.Transaction{
-			Id:           int32(transaction.ID),
-			FromWalletId: int32(transaction.FromWalletID),
-			ToWalletId:   int32(transaction.ToWalletID),
-			Amount:       transaction.Amount,
-			CreatedAt:    timestamppb.New(transaction.CreatedAt),
+			Id:          int32(transaction.ID),
+			SenderId:    int32(transaction.SenderID),
+			RecipientId: int32(transaction.RecipientID),
+			Amount:      transaction.Amount,
+			CreatedAt:   timestamppb.New(transaction.CreatedAt),
+			UpdatedAt:   timestamppb.New(transaction.UpdatedAt),
 		})
 	}
 	return &pb.GetTransactionsResponse{

@@ -14,8 +14,6 @@ import (
 )
 
 func main() {
-	// Initialize gRPC clients
-	// Initialize gRPC clients with secure credentials
 	userConn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to User service: %v", err)
@@ -100,7 +98,7 @@ func main() {
 		}
 
 		// Call Wallet service to perform top-up
-		_, err = walletClient.TopUp(context.Background(), &walletpb.TopUpRequest{WalletId: int32(walletId), Amount: req.Amount})
+		_, err = walletClient.TopupWallet(context.Background(), &walletpb.TopupRequest{WalletId: int32(walletId), Amount: req.Amount})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -129,8 +127,8 @@ func main() {
 
 		// Call Wallet service to perform transfer
 		_, err = walletClient.Transfer(context.Background(), &walletpb.TransferRequest{
-			SenderId:    int32(senderId),
-			RecipientId: int32(req.RecipientId),
+			FromWalletId:    int32(senderId),
+			ToWalletId: int32(req.RecipientId),
 			Amount:      req.Amount,
 		})
 		if err != nil {

@@ -1,0 +1,136 @@
+{
+   "info": {
+     "name": "Simple Wallet System",
+     "_postman_id": "12345-67890-abcdef",
+     "description": "API collection for the Simple Wallet System",
+     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+   },
+   "item": [
+     {
+       "name": "Get User by ID",
+       "request": {
+         "method": "GET",
+         "header": [],
+         "url": {
+           "raw": "http://localhost:8080/users/:id",
+           "protocol": "http",
+           "host": [
+             "localhost"
+           ],
+           "port": "8080",
+           "path": [
+             "users",
+             ":id"
+           ],
+           "variable": [
+             {
+               "key": "id",
+               "value": "1"
+             }
+           ]
+         }
+       },
+       "response": []
+     },
+     {
+       "name": "Get User Transactions",
+       "request": {
+         "method": "GET",
+         "header": [],
+         "url": {
+           "raw": "http://localhost:8080/users/:id/transactions",
+           "protocol": "http",
+           "host": [
+             "localhost"
+           ],
+           "port": "8080",
+           "path": [
+             "users",
+             ":id",
+             "transactions"
+           ],
+           "variable": [
+             {
+               "key": "id",
+               "value": "1"
+             }
+           ]
+         }
+       },
+       "response": []
+     },
+     {
+       "name": "Wallet Top-up",
+       "request": {
+         "method": "POST",
+         "header": [
+           {
+             "key": "Content-Type",
+             "value": "application/json"
+           }
+         ],
+         "body": {
+           "mode": "raw",
+           "raw": "{\n\t\"amount\": 100.0\n}"
+         },
+         "url": {
+           "raw": "http://localhost:8080/wallets/:id/topup",
+           "protocol": "http",
+           "host": [
+             "localhost"
+           ],
+           "port": "8080",
+           "path": [
+             "wallets",
+             ":id",
+             "topup"
+           ],
+           "variable": [
+             {
+               "key": "id",
+               "value": "1"
+             }
+           ]
+         }
+       },
+       "response": []
+     },
+     {
+       "name": "Wallet Transfer",
+       "request": {
+         "method": "POST",
+         "header": [
+           {
+             "key": "Content-Type",
+             "value": "application/json"
+           }
+         ],
+         "body": {
+           "mode": "raw",
+           "raw": "{\n\t\"recipient_id\": 2,\n\t\"amount\": 50.0\n}"
+         },
+         "url": {
+           "raw": "http://localhost:8080/wallets/:id/transfers",
+           "protocol": "http",
+           "host": [
+             "localhost"
+           ],
+           "port": "8080",
+           "path": [
+             "wallets",
+             ":id",
+             "transfers"
+           ],
+           "variable": [
+             {
+               "key": "id",
+               "value": "1"
+             }
+           ]
+         }
+       },
+       "response": []
+     }
+   ]
+ }
+ 

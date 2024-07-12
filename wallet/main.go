@@ -23,7 +23,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	gormDB.AutoMigrate(&entity.Wallet{})
+	gormDB.AutoMigrate(&entity.Wallet{}, &entity.Transaction{})
 	// setup service
 
 	// uncomment to use postgres gorm

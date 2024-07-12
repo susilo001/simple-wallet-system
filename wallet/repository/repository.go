@@ -100,7 +100,7 @@ func (r *walletRepository) TopupWallet(ctx context.Context, walletID int, amount
 	return r.createTransaction(ctx, walletID, 0, amount)
 }
 
-func (r *walletRepository) Transfer(ctx context.Context, fromWalletID int, toWalletID int, amount float64) error {
+func (r *walletRepository) Transfer(ctx context.Context, senderID int, recipientID int, amount float64) error {
 	tx := r.db.WithContext(ctx).Begin()
 	if tx.Error != nil {
 		log.Printf("Error beginning transaction: %v\n", tx.Error)
@@ -108,7 +108,7 @@ func (r *walletRepository) Transfer(ctx context.Context, fromWalletID int, toWal
 	}
 
 	var fromWallet entity.Wallet
-	if err := tx.First(&fromWallet, fromWalletID).Error; err != nil {
+	if err := tx.First(&fromWallet, recipientID).Error; err != nil {
 		log.Printf("Error finding sender's wallet for transfer: %v\n", err)
 		tx.Rollback()
 		return err
@@ -127,7 +127,7 @@ func (r *walletRepository) Transfer(ctx context.Context, fromWalletID int, toWal
 	}
 
 	var toWallet entity.Wallet
-	if err := tx.First(&toWallet, toWalletID).Error; err != nil {
+	if err := tx.First(&toWallet, recipientID).Error; err != nil {
 		log.Printf("Error finding receiver's wallet for transfer: %v\n", err)
 		tx.Rollback()
 		return err
@@ -140,7 +140,7 @@ func (r *walletRepository) Transfer(ctx context.Context, fromWalletID int, toWal
 		return err
 	}
 
-	if err := r.createTransaction(ctx, fromWalletID, toWalletID, amount); err != nil {
+	if err := r.createTransaction(ctx, senderID, recipientID, amount); err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -150,19 +150,19 @@ func (r *walletRepository) Transfer(ctx context.Context, fromWalletID int, toWal
 
 func (r *walletRepository) GetTransactions(ctx context.Context, walletID int) ([]entity.Transaction, error) {
 	var transactions []entity.Transaction
-	if err := r.db.WithContext(ctx).Where("from_wallet_id = ? OR to_wallet_id = ?", walletID, walletID).Find(&transactions).Error; err != nil {
+	if err := r.db.WithContext(ctx).Where("sender_id = ? OR recipient_id = ?", walletID, walletID).Find(&transactions).Error; err != nil {
 		log.Printf("Error getting transactions: %v\n", err)
 		return nil, err
 	}
 	return transactions, nil
 }
 
-func (r *walletRepository) createTransaction(ctx context.Context, fromWalletID int, toWalletID int, amount float64) error {
+func (r *walletRepository) createTransaction(ctx context.Context, senderID int, recipientID int, amount float64) error {
 	transaction := entity.Transaction{
-		FromWalletID: fromWalletID,
-		ToWalletID:   toWalletID,
-		Amount:       amount,
-		CreatedAt:    time.Now(),
+		SenderID:    senderID,
+		RecipientID: recipientID,
+		Amount:      amount,
+		CreatedAt:   time.Now(),
 	}
 
 	if err := r.db.WithContext(ctx).Create(&transaction).Error; err != nil {
@@ -172,4 +172,3 @@ func (r *walletRepository) createTransaction(ctx context.Context, fromWalletID i
 
 	return nil
 }
-

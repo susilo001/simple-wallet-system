@@ -12,7 +12,7 @@ service WalletService {
     rpc CreateWallet (CreateWalletRequest) returns (MutationResponse);
     rpc UpdateWallet (UpdateWalletRequest) returns (MutationResponse);
     rpc GetBalance (GetBalanceRequest) returns (GetBalanceResponse);
-    rpc TopupWallet (TopupRequest) returns (MutationResponse);
+    rpc TopUpWallet (TopupRequest) returns (MutationResponse);
     rpc Transfer (TransferRequest) returns (MutationResponse);
     rpc GetTransactions (GetTransactionsRequest) returns (GetTransactionsResponse);
 }
@@ -48,8 +48,8 @@ message TopupRequest {
 }
 
 message TransferRequest {
-    int32 from_wallet_id = 1;
-    int32 to_wallet_id = 2;
+    int32 sender_id = 1;
+    int32 recipient_id = 2;
     double amount = 3;
 }
 
@@ -63,10 +63,11 @@ message GetTransactionsResponse {
 
 message Transaction {
     int32 id = 1;
-    int32 from_wallet_id = 2;
-    int32 to_wallet_id = 3;
+    int32 sender_id = 2;
+    int32 recipient_id = 3;
     double amount = 4;
     google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
 }
 message MutationResponse {
     string message = 1;

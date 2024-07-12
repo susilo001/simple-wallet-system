@@ -98,7 +98,7 @@ func main() {
 		}
 
 		// Call Wallet service to perform top-up
-		_, err = walletClient.TopupWallet(context.Background(), &walletpb.TopupRequest{WalletId: int32(walletId), Amount: req.Amount})
+		_, err = walletClient.TopUpWallet(context.Background(), &walletpb.TopUpRequest{WalletId: int32(walletId), Amount: req.Amount})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

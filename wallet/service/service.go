@@ -12,7 +12,7 @@ type IWalletService interface {
 	GetWalletByID(ctx context.Context, id int) (entity.Wallet, error)
 	UpdateWallet(ctx context.Context, id int, wallet entity.Wallet) (entity.Wallet, error)
 	TopUpWallet(ctx context.Context, walletID int, amount float64) error
-	Transfer(ctx context.Context, fromWalletID int, toWalletID int, amount float64) error
+	Transfer(ctx context.Context, senderID int, recipientID int, amount float64) error
 	GetTransactions(ctx context.Context, walletID int) ([]entity.Transaction, error)
 }
 
@@ -22,8 +22,8 @@ type IWalletRepository interface {
 	UpdateWallet(ctx context.Context, id int, wallet entity.Wallet) (entity.Wallet, error)
 	DeleteWallet(ctx context.Context, id int) error
 	GetAllWallets(ctx context.Context) ([]entity.Wallet, error)
-	TopupWallet(ctx context.Context, walletID int, amount float64) error
-	Transfer(ctx context.Context, fromWalletID int, toWalletID int, amount float64) error
+	TopUpWallet(ctx context.Context, walletID int, amount float64) error
+	Transfer(ctx context.Context, senderID int, recipientID int, amount float64) error
 	GetTransactions(ctx context.Context, walletID int) ([]entity.Transaction, error)
 }
 
@@ -60,15 +60,15 @@ func (s *walletService) UpdateWallet(ctx context.Context, id int, wallet entity.
 }
 
 func (s *walletService) TopUpWallet(ctx context.Context, walletID int, amount float64) error {
-	err := s.walletRepo.TopupWallet(ctx, walletID, amount)
+	err := s.walletRepo.TopUpWallet(ctx, walletID, amount)
 	if err != nil {
 		return fmt.Errorf("failed to top up wallet: %v", err)
 	}
 	return nil
 }
 
-func (s *walletService) Transfer(ctx context.Context, fromWalletID int, toWalletID int, amount float64) error {
-	err := s.walletRepo.Transfer(ctx, fromWalletID, toWalletID, amount)
+func (s *walletService) Transfer(ctx context.Context, senderID int, recipientID int, amount float64) error {
+	err := s.walletRepo.Transfer(ctx, senderID, recipientID, amount)
 	if err != nil {
 		return fmt.Errorf("failed to transfer amount: %v", err)
 	}

@@ -84,7 +84,7 @@ func (r *walletRepository) GetAllWallets(ctx context.Context) ([]entity.Wallet, 
 	return wallets, nil
 }
 
-func (r *walletRepository) TopupWallet(ctx context.Context, walletID int, amount float64) error {
+func (r *walletRepository) TopUpWallet(ctx context.Context, walletID int, amount float64) error {
 	var wallet entity.Wallet
 	if err := r.db.WithContext(ctx).First(&wallet, walletID).Error; err != nil {
 		log.Printf("Error finding wallet for top-up: %v\n", err)
@@ -107,20 +107,20 @@ func (r *walletRepository) Transfer(ctx context.Context, senderID int, recipient
 		return tx.Error
 	}
 
-	var fromWallet entity.Wallet
-	if err := tx.First(&fromWallet, recipientID).Error; err != nil {
+	var senderWallet entity.Wallet
+	if err := tx.First(&senderWallet, recipientID).Error; err != nil {
 		log.Printf("Error finding sender's wallet for transfer: %v\n", err)
 		tx.Rollback()
 		return err
 	}
 
-	if fromWallet.Balance < amount {
+	if senderWallet.Balance < amount {
 		tx.Rollback()
 		return errors.New("insufficient balance")
 	}
 
-	fromWallet.Balance -= amount
-	if err := tx.Save(&fromWallet).Error; err != nil {
+	senderWallet.Balance -= amount
+	if err := tx.Save(&senderWallet).Error; err != nil {
 		log.Printf("Error updating sender's wallet balance: %v\n", err)
 		tx.Rollback()
 		return err
@@ -163,6 +163,7 @@ func (r *walletRepository) createTransaction(ctx context.Context, senderID int, 
 		RecipientID: recipientID,
 		Amount:      amount,
 		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	}
 
 	if err := r.db.WithContext(ctx).Create(&transaction).Error; err != nil {

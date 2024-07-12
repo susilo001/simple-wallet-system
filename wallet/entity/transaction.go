@@ -4,12 +4,11 @@ import (
 	"time"
 )
 
-// Transaction represents a wallet transaction
 type Transaction struct {
-	ID          int       `json:"id"`
+	ID          int       `gorm:"primaryKey;autoIncrement" json:"id"`
 	SenderID    int       `json:"sender_id"`
 	RecipientID int       `json:"recipient_id"`
 	Amount      float64   `json:"amount"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	CreatedAt   time.Time `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }

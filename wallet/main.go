@@ -24,12 +24,9 @@ func main() {
 	}
 
 	gormDB.AutoMigrate(&entity.Wallet{}, &entity.Transaction{})
-	// setup service
 
-	// uncomment to use postgres gorm
 	walletRepo := repository.NewWalletRepository(gormDB)
 	walletService := service.NewWalletService(walletRepo)
-	//walletHandler := ginHandler.NewWalletHandler(walletService)
 	walletHandler := handler.NewWalletHandler(walletService)
 
 	// Run the grpc server

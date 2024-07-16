@@ -24,12 +24,9 @@ func main() {
 	}
 
 	gormDB.AutoMigrate(&entity.User{})
-	// setup service
 
-	// uncomment to use postgres gorm
 	repository := repository.NewUserRepository(gormDB)
 	service := service.NewUserService(repository)
-	//userHandler := ginHandler.NewUserHandler(service)
 	handler := handler.NewUserHandler(service)
 
 	// Run the grpc server
